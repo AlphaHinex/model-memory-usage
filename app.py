@@ -52,7 +52,7 @@ with gr.Blocks() as demo:
         """# Model Memory Calculator
 
         This tool will help you calculate how much vRAM is needed to train and perform big model inference
-        on a model hosted on the :hugging_face: Hugging Face Hub. The minimum recommended vRAM needed for a model
+        on a model hosted on the 🤗 Hugging Face Hub. The minimum recommended vRAM needed for a model
         is denoted as the size of the "largest layer", and training of a model is roughly 4x its size (for Adam).
         
         Currently this tool supports all models hosted that use `transformers` and `timm`.
