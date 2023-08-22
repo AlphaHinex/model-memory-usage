@@ -65,6 +65,7 @@ with gr.Blocks() as demo:
     out_text = gr.Markdown()
     out = gr.DataFrame(
         headers=["dtype", "Largest Layer", "Total Size", "Training using Adam"],
+        interactive=False,
     )
 
     inp = gr.Textbox(label="Model Name or URL")
