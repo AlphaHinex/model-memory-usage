@@ -45,26 +45,39 @@ def calculate_memory(model_name:str, library:str, options:list):
             "Total Size": dtype_total_size,
             "Training using Adam": dtype_training_size
         })
-    return pd.DataFrame(data)
-    # return f"## {title}\n\n" + markdown_table(data).set_params(
-    #         row_sep="markdown", quote=False,
-    #     ).get_markdown()
+    return f'## {title}', pd.DataFrame(data)
 
+with gr.Blocks() as demo:
+    gr.Markdown(
+        """# Model Memory Calculator
 
-options = gr.CheckboxGroup(
-    ["float32", "float16", "int8", "int4"],
-)
+        This tool will help you calculate how much vRAM is needed to train and perform big model inference
+        on a model hosted on the :hugging_face: Hugging Face Hub. The minimum recommended vRAM needed for a model
+        is denoted as the size of the "largest layer", and training of a model is roughly 4x its size (for Adam).
+        
+        Currently this tool supports all models hosted that use `transformers` and `timm`.
 
-library = gr.Radio(["auto", "transformers", "timm"], label="Library", value="auto")
+        To use this tool pass in the URL or model name of the model you want to calculate the memory usage for,
+        select which framework it originates from ("auto" will try and detect it from the model metadata), and
+        what precisions you want to use.  
+        """
+    )
+    out_text = gr.Markdown()
+    out = gr.DataFrame(
+        headers=["dtype", "Largest Layer", "Total Size", "Training using Adam"],
+    )
 
-iface = gr.Interface(
-    fn=calculate_memory,
-    inputs=[
-        "text",
-        library,
-        options,
-    ],
-    outputs="dataframe"
-)
+    inp = gr.Textbox(label="Model Name or URL")
+    with gr.Row():
+        library = gr.Radio(["auto", "transformers", "timm"], label="Library", value="auto")
+        options = gr.CheckboxGroup(
+            ["float32", "float16", "int8", "int4"],
+            value="float32"
+        )
+    btn = gr.Button("Calculate Memory Usage", scale=0.5)
 
-iface.launch()
+    btn.click(
+        calculate_memory, inputs=[inp, library, options], outputs=[out_text, out],
+    )
+
+demo.launch()
