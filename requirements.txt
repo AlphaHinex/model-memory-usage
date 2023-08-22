@@ -1,0 +1,5 @@
+model-sizer @ git+https://github.com/muellerzr/model-sizer@main
+transformers
+timm
+huggingface_hub
+py-markdown-table
