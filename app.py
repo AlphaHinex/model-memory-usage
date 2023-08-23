@@ -1,9 +1,44 @@
 import re
+import webbrowser
 import pandas as pd
 import gradio as gr
-from py_markdown_table.markdown_table import markdown_table
-from model_sizer.utils import get_sizes, create_empty_model, convert_bytes
+from huggingface_hub import HfApi
+from accelerate.commands.estimate import create_empty_model
+from accelerate.utils import convert_bytes, calculate_maximum_sizes
 
+# We need to store them as globals because gradio doesn't have a way for us to pass them in to the button
+HAS_DISCUSSION = True
+MODEL_NAME = None
+LIBRARY = None
+TRUST_REMOTE_CODE = False
+
+# We use this class to check if a discussion has been opened on the model by `huggingface_model_memory_bot`
+hf_api = HfApi()
+
+def check_for_discussion(model_name:str):
+    "Checks if a discussion has been opened on the model"
+    global hf_api
+    discussions = list(hf_api.get_repo_discussions(model_name))
+    return any(discussion.title == "[AUTOMATED] Model Memory Requirements" for discussion in discussions)
+
+def report_results():
+    "Reports the results of a memory calculation to the model's discussion"
+    global MODEL_NAME, LIBRARY, TRUST_REMOTE_CODE
+    _, results = calculate_memory(MODEL_NAME, LIBRARY, ["float32", "float16", "int8", "int4"], TRUST_REMOTE_CODE, raw=True)
+    post = f"""# Model Memory Requirements\n
+    
+These calculations were measured from the [Model Memory Utility Space](https://hf.co/spaces/muellerzr/model-memory-utility) on the Hub.
+    
+The minimum recommended vRAM needed for this model to perform inference via [Accelerate or `device_map="auto"`](https://huggingface.co/docs/accelerate/usage_guides/big_modeling) is denoted by the size of the "largest layer" and training of the model is roughly 4x its total size (for Adam).
+
+## Results
+
+"""
+    global hf_api
+    post += results.to_markdown(index=False)
+    discussion = hf_api.create_discussion(MODEL_NAME, "[AUTOMATED] Model Memory Requirements", description=post)
+    webbrowser.open_new_tab(discussion.url)
+        
 
 def convert_url_to_name(url:str):
     "Converts a model URL to its name on the Hub"
@@ -12,14 +47,14 @@ def convert_url_to_name(url:str):
         raise ValueError(f"URL {url} is not a valid model URL to the Hugging Face Hub")
     return results[0]
 
-def calculate_memory(model_name:str, library:str, options:list):
+def calculate_memory(model_name:str, library:str, options:list, trust_remote_code:bool, raw=False):
     "Calculates the memory usage for a model"
     if library == "auto":
         library = None
     if "huggingface.co" in model_name:
         model_name = convert_url_to_name(model_name)
-    model = create_empty_model(model_name, library_name=library)
-    total_size, largest_layer = get_sizes(model)
+    model = create_empty_model(model_name, library_name=library, trust_remote_code=trust_remote_code)
+    total_size, largest_layer = calculate_maximum_sizes(model)
 
     data = []
 
@@ -45,7 +80,15 @@ def calculate_memory(model_name:str, library:str, options:list):
             "Total Size": dtype_total_size,
             "Training using Adam": dtype_training_size
         })
-    return f'## {title}', pd.DataFrame(data)
+    global HAS_DISCUSSION, MODEL_NAME, LIBRARY, TRUST_REMOTE_CODE
+    HAS_DISCUSSION = check_for_discussion(model_name)
+    MODEL_NAME = model_name
+    LIBRARY = library
+    TRUST_REMOTE_CODE = trust_remote_code
+    results = [f'## {title}', pd.DataFrame(data)]
+    if not raw:
+        results += [gr.update(visible=not HAS_DISCUSSION)]
+    return results
 
 with gr.Blocks() as demo:
     gr.Markdown(
@@ -75,10 +118,15 @@ with gr.Blocks() as demo:
             ["float32", "float16", "int8", "int4"],
             value="float32"
         )
-    btn = gr.Button("Calculate Memory Usage", scale=0.5)
+        trust_remote_code = gr.Checkbox(label="Trust Remote Code", value=False)
+    btn = gr.Button("Calculate Memory Usage")
+    post_to_hub = gr.Button(value = "Report results in this model repo's discussions!", visible=False)
 
     btn.click(
-        calculate_memory, inputs=[inp, library, options], outputs=[out_text, out],
+        calculate_memory, inputs=[inp, library, options, trust_remote_code], outputs=[out_text, out, post_to_hub],
     )
+    
+    post_to_hub.click(report_results)
+
 
 demo.launch()
