@@ -36,8 +36,9 @@ The minimum recommended vRAM needed for this model to perform inference via [Acc
 """
     global hf_api
     post += results.to_markdown(index=False)
-    discussion = hf_api.create_discussion(MODEL_NAME, "[AUTOMATED] Model Memory Requirements", description=post)
-    webbrowser.open_new_tab(discussion.url)
+    # Uncomment when ready to go live
+    #discussion = hf_api.create_discussion(MODEL_NAME, "[AUTOMATED] Model Memory Requirements", description=post)
+    #webbrowser.open_new_tab(discussion.url)
         
 
 def convert_url_to_name(url:str):
