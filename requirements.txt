@@ -2,4 +2,4 @@ accelerate @ git+https://github.com/huggingface/accelerate@model-size-estimator
 transformers
 timm
 huggingface_hub
-py-markdown-table
+tabulate
