@@ -1,4 +1,4 @@
-model-sizer @ git+https://github.com/muellerzr/model-sizer@main
+accelerate @ git+https://github.com/huggingface/accelerate@model-size-estimator
 transformers
 timm
 huggingface_hub
