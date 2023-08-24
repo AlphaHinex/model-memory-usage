@@ -1,4 +1,4 @@
-accelerate @ git+https://github.com/huggingface/accelerate@model-size-estimator
+accelerate @ git+https://github.com/huggingface/accelerate
 transformers
 timm
 huggingface_hub
