@@ -1,4 +1,4 @@
-accelerate @ git+https://github.com/huggingface/accelerate
+accelerate @ git+https://github.com/huggingface/accelerate@token
 transformers
 timm
 huggingface_hub
