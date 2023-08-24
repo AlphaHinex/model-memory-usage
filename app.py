@@ -16,13 +16,14 @@ TOKEN = os.environ.get("HUGGINGFACE_API_LOGIN", None)
 
 def check_for_discussion(model_name:str):
     "Checks if an automated discussion has been opened on the model by `model-sizer-bot`"
+    global TOKEN
     api = HfApi(token=TOKEN)
     discussions = list(api.get_repo_discussions(model_name))
     return any(discussion.title == "[AUTOMATED] Model Memory Requirements" and discussion.author == "model-sizer-bot" for discussion in discussions)
 
 def report_results():
     "Reports the results of a memory calculation to the model's discussion page, and opens a new tab to it afterwards"
-    global MODEL_NAME, LIBRARY
+    global MODEL_NAME, LIBRARY, TOKEN
     api = HfApi(token=TOKEN)
     results = calculate_memory(MODEL_NAME, LIBRARY, ["fp32", "fp16", "int8", "int4"], raw=True)
     post = f"""# Model Memory Requirements\n
