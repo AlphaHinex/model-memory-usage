@@ -142,7 +142,8 @@ with gr.Blocks() as demo:
             library = gr.Radio(["auto", "transformers", "timm"], label="Library", value="auto")
             options = gr.CheckboxGroup(
                 ["float32", "float16", "int8", "int4"],
-                value="float32"
+                value="float32",
+                label="Model Precision",
             )
             access_token = gr.Textbox(label="API Token", placeholder="Optional (for gated models)")
         with gr.Row():
