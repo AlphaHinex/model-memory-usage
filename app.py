@@ -121,6 +121,9 @@ with gr.Blocks() as demo:
     on a model hosted on the 🤗 Hugging Face Hub. The minimum recommended vRAM needed for a model
     is denoted as the size of the "largest layer", and training of a model is roughly 4x its size (for Adam).
 
+    When performing inference, expect to add up to an additional 20% to this as found by [EleutherAI](https://blog.eleuther.ai/transformer-math/). 
+    More tests will be performed in the future to get a more accurate benchmark for each model.
+
     Currently this tool supports all models hosted that use `transformers` and `timm`.
 
     To use this tool pass in the URL or model name of the model you want to calculate the memory usage for,
