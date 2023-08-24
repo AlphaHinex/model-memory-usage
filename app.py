@@ -115,7 +115,7 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
 with gr.Blocks() as demo:
     with gr.Column():
         gr.Markdown(
-            """# Model Memory Calculator
+            """<img src="https://huggingface.co/spaces/hf-accelerate/model-memory-usage/resolve/main/measure_model_size.png" style="float: left;" width="250" height="250"><h1>🤗 Model Memory Calculator</h1>
 
     This tool will help you calculate how much vRAM is needed to train and perform big model inference
     on a model hosted on the 🤗 Hugging Face Hub. The minimum recommended vRAM needed for a model
