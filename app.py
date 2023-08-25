@@ -12,6 +12,7 @@ from accelerate.utils import convert_bytes, calculate_maximum_sizes
 HAS_DISCUSSION = True
 MODEL_NAME = None
 LIBRARY = None
+USER_TOKEN = None
 TOKEN = os.environ.get("HUGGINGFACE_API_LOGIN", None)
 
 def check_for_discussion(model_name:str):
@@ -23,9 +24,10 @@ def check_for_discussion(model_name:str):
 
 def report_results():
     "Reports the results of a memory calculation to the model's discussion page, and opens a new tab to it afterwards"
-    global MODEL_NAME, LIBRARY, TOKEN
+    global MODEL_NAME, LIBRARY, TOKEN, USER_TOKEN
     api = HfApi(token=TOKEN)
-    results = calculate_memory(MODEL_NAME, LIBRARY, ["fp32", "fp16", "int8", "int4"], raw=True)
+    results = calculate_memory(MODEL_NAME, LIBRARY, ["fp32", "fp16", "int8", "int4"], access_token=USER_TOKEN, raw=True)
+    USER_TOKEN = None
     post = f"""# Model Memory Requirements\n
     
 These calculations were measured from the [Model Memory Utility Space](https://hf.co/spaces/hf-accelerate/model-memory-utility) on the Hub.
@@ -149,6 +151,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             btn = gr.Button("Calculate Memory Usage")
             post_to_hub = gr.Button(value = "Report results in this model repo's discussions!\n(Will open in a new tab)", visible=False)
+    USER_TOKEN = access_token
 
     btn.click(
         calculate_memory, inputs=[inp, library, options, access_token], outputs=[out_text, out, post_to_hub],
