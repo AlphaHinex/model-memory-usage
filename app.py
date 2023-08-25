@@ -26,13 +26,17 @@ def report_results():
     "Reports the results of a memory calculation to the model's discussion page, and opens a new tab to it afterwards"
     global MODEL_NAME, LIBRARY, TOKEN, USER_TOKEN
     api = HfApi(token=TOKEN)
-    results = calculate_memory(MODEL_NAME, LIBRARY, ["fp32", "fp16", "int8", "int4"], access_token=USER_TOKEN, raw=True)
+    results, data = calculate_memory(MODEL_NAME, LIBRARY, ["fp32", "fp16", "int8", "int4"], access_token=USER_TOKEN, raw=True)
+    minimum = data[0]
+
     USER_TOKEN = None
     post = f"""# Model Memory Requirements\n
+
+You will need about {minimum[1]} VRAM to load this model for inference, and {minimum[3]} VRAM to train it using Adam.
     
 These calculations were measured from the [Model Memory Utility Space](https://hf.co/spaces/hf-accelerate/model-memory-utility) on the Hub.
     
-The minimum recommended vRAM needed for this model to be loaded into memory via [Accelerate or `device_map="auto"`](https://huggingface.co/docs/accelerate/usage_guides/big_modeling) is denoted by the size of the "largest layer". 
+The minimum recommended vRAM needed for this model assumes using [Accelerate or `device_map="auto"`](https://huggingface.co/docs/accelerate/usage_guides/big_modeling) and is denoted by the size of the "largest layer". 
 When performing inference, expect to add up to an additional 20% to this, as found by [EleutherAI](https://blog.eleuther.ai/transformer-math/). More tests will be performed in the future to get a more accurate benchmark for each model.
 
 When training with `Adam`, you can expect roughly 4x the reported results to be used. (1x for the model, 1x for the gradients, and 2x for the optimizer).
@@ -105,7 +109,7 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
     LIBRARY = library
 
     if raw:
-        return pd.DataFrame(data).to_markdown(index=False)
+        return pd.DataFrame(data).to_markdown(index=False), data
     
     results = [
         f'## {title}', 
