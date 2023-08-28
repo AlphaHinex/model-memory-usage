@@ -145,7 +145,7 @@ with gr.Blocks() as demo:
             visible=False,
         )
         with gr.Row():
-            inp = gr.Textbox(label="Model Name or URL")
+            inp = gr.Textbox(label="Model Name or URL", value="bert-base-cased")
         with gr.Row():
             library = gr.Radio(["auto", "transformers", "timm"], label="Library", value="auto")
             options = gr.CheckboxGroup(
