@@ -3,3 +3,5 @@ transformers
 timm
 huggingface_hub
 tabulate
+flash-attn
+einops
