@@ -67,7 +67,7 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
     try:
         model = create_empty_model(model_name, library_name=library, trust_remote_code=True, access_token=access_token)
     except GatedRepoError:
-        raise gr.Error(f"Model `{model_name}` is a gated model, please ensure to pass in your access token and try again if you have access.")
+        raise gr.Error(f"Model `{model_name}` is a gated model, please ensure to pass in your access token and try again if you have access. You can find your access token here : https://huggingface.co/settings/tokens. ")
     except RepositoryNotFoundError:
         raise gr.Error(f"Model `{model_name}` was not found on the Hub, please try another model name.")
     except ValueError as e:
