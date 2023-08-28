@@ -85,7 +85,7 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
     for dtype in options:
         dtype_total_size = total_size
         dtype_largest_layer = largest_layer[0]
-        if dtype in ("float16", "fp16", "bfloat16", "bf16"):
+        if dtype in ("fp16",  "bf16", "float16/bfloat16"):
             dtype_total_size /= 2
             dtype_largest_layer /= 2
         elif dtype == "int8":
