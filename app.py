@@ -85,7 +85,7 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
     for dtype in options:
         dtype_total_size = total_size
         dtype_largest_layer = largest_layer[0]
-        if dtype in ("float16", "fp16"):
+        if dtype in ("float16", "fp16", "bfloat16", "bf16"):
             dtype_total_size /= 2
             dtype_largest_layer /= 2
         elif dtype == "int8":
@@ -149,7 +149,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             library = gr.Radio(["auto", "transformers", "timm"], label="Library", value="auto")
             options = gr.CheckboxGroup(
-                ["float32", "float16", "int8", "int4"],
+                ["float32", "float16/bfloat16", "int8", "int4"],
                 value="float32",
                 label="Model Precision",
             )
