@@ -4,4 +4,4 @@ timm
 huggingface_hub
 tabulate
 einops
-flash-attn --no-deps
+flash-attn, --no-build-isolation
