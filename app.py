@@ -127,6 +127,8 @@ with gr.Blocks() as demo:
     on a model hosted on the 🤗 Hugging Face Hub. The minimum recommended vRAM needed for a model
     is denoted as the size of the "largest layer", and training of a model is roughly 4x its size (for Adam).
 
+    These calculations are accurate within a few percent at most, such as `bert-base-cased` being 413.68 MB and the calculator estimating 413.18 MB.
+
     When performing inference, expect to add up to an additional 20% to this as found by [EleutherAI](https://blog.eleuther.ai/transformer-math/). 
     More tests will be performed in the future to get a more accurate benchmark for each model.
 
