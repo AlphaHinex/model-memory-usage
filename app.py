@@ -84,9 +84,12 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
         library = check_has_model(e)
         if library != "unknown":
             raise gr.Error(f"Tried to load `{model_name}` with `{library}` but a possible model to load was not found inside the repo.")
+        raise gr.Error(f"Model `{model_name}` had an error, please open a discussion on the model's page with the error message and name: `{e}`")
     except ImportError:
         # hacky way to check if it works with `trust_remote_code=False`
         model = create_empty_model(model_name, library_name=library, trust_remote_code=False, access_token=access_token)
+    except Exception as e:
+        raise gr.Error(f"Model `{model_name}` had an error, please open a discussion on the model's page with the error message and name: `{e}`")
     total_size, largest_layer = calculate_maximum_sizes(model)
 
     data = []
