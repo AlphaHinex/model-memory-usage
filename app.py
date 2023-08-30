@@ -19,6 +19,7 @@ def translate_llama2(text):
     "Translates llama-2 to its hf counterpart"
     if not text.endswith("-hf"):
         return text + "-hf"
+    return text
 
 def check_for_discussion(model_name:str):
     "Checks if an automated discussion has been opened on the model by `model-sizer-bot`"
@@ -62,7 +63,7 @@ def convert_url_to_name(url:str):
 
 def calculate_memory(model_name:str, library:str, options:list, access_token:str, raw=False):
     "Calculates the memory usage for a model"
-    if model_name.startswith("meta-llama"):
+    if "meta-llama" in model_name:
         model_name = translate_llama2(model_name)
     if library == "auto":
         library = None
