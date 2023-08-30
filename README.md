@@ -3,9 +3,8 @@ title: Model Memory Utility
 emoji: 🚀
 colorFrom: pink
 colorTo: blue
-sdk: gradio
-sdk_version: 3.40.1
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: false
 license: apache-2.0
 ---
