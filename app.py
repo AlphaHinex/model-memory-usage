@@ -15,6 +15,11 @@ LIBRARY = None
 USER_TOKEN = None
 TOKEN = os.environ.get("HUGGINGFACE_API_LOGIN", None)
 
+def translate_llama2(text):
+    "Translates llama-2 to its hf counterpart"
+    if not text.endswith("-hf"):
+        return text + "-hf"
+
 def check_for_discussion(model_name:str):
     "Checks if an automated discussion has been opened on the model by `model-sizer-bot`"
     global TOKEN
@@ -57,6 +62,8 @@ def convert_url_to_name(url:str):
 
 def calculate_memory(model_name:str, library:str, options:list, access_token:str, raw=False):
     "Calculates the memory usage for a model"
+    if model_name.startswith("meta-llama"):
+        model_name = translate_llama2(model_name)
     if library == "auto":
         library = None
     if "http" in model_name and "//" in model_name:
