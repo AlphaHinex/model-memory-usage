@@ -7,6 +7,7 @@ from huggingface_hub import HfApi
 from huggingface_hub.utils import RepositoryNotFoundError, GatedRepoError
 from accelerate.commands.estimate import create_empty_model, check_has_model
 from accelerate.utils import convert_bytes, calculate_maximum_sizes
+from urllib.parse import urlparse
 
 # We need to store them as globals because gradio doesn't have a way for us to pass them in to the button
 HAS_DISCUSSION = True
@@ -54,12 +55,20 @@ When training with `Adam`, you can expect roughly 4x the reported results to be 
     discussion = api.create_discussion(MODEL_NAME, "[AUTOMATED] Model Memory Requirements", description=post)
     webbrowser.open_new_tab(discussion.url)
 
-def convert_url_to_name(url:str):
-    "Converts a model URL to its name on the Hub"
-    results = re.findall(r"huggingface.co\/(.*?)#", url)
-    if len(results) < 1:
-        raise ValueError(f"URL {url} is not a valid model URL to the Hugging Face Hub")
-    return results[0]
+def extract_from_url(name:str):
+    "Checks if `name` is a URL, and if so converts it to a model name"
+    is_url = False
+    try:
+        result = urlparse(name)
+        is_url = all([result.scheme, result.netloc])
+    except:
+        is_url = False
+    # Pass through if not a URL
+    if not is_url:
+        return name
+    else:
+        path = result.path
+        return path[1:]
 
 def calculate_memory(model_name:str, library:str, options:list, access_token:str, raw=False):
     "Calculates the memory usage for a model"
@@ -67,11 +76,7 @@ def calculate_memory(model_name:str, library:str, options:list, access_token:str
         model_name = translate_llama2(model_name)
     if library == "auto":
         library = None
-    if "http" in model_name and "//" in model_name:
-        try:
-            model_name = convert_url_to_name(model_name)
-        except ValueError:
-            raise gr.Error(f"URL `{model_name}` is not a valid model URL to the Hugging Face Hub")
+    model_name = extract_from_url(model_name)
     try:
         model = create_empty_model(model_name, library_name=library, trust_remote_code=True, access_token=access_token)
     except GatedRepoError:
