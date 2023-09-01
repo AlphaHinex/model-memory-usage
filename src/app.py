@@ -1,8 +1,7 @@
 import gradio as gr
 import pandas as pd
-
-from .hub_utils import check_for_discussion, report_results
-from .model_utils import calculate_memory, get_model
+from hub_utils import check_for_discussion, report_results
+from model_utils import calculate_memory, get_model
 
 
 # We need to store them as globals because gradio doesn't have a way for us to pass them in to the button

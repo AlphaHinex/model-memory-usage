@@ -1,14 +1,30 @@
 # Utilities related to loading in and working with models/specific models
+from urllib.parse import urlparse
+
 import gradio as gr
 import torch
 from accelerate.commands.estimate import check_has_model, create_empty_model
 from accelerate.utils import calculate_maximum_sizes, convert_bytes
 from huggingface_hub.utils import GatedRepoError, RepositoryNotFoundError
 
-from .hub_utils import extract_from_url
-
 
 DTYPE_MODIFIER = {"float32": 1, "float16/bfloat16": 2, "int8": 4, "int4": 8}
+
+
+def extract_from_url(name: str):
+    "Checks if `name` is a URL, and if so converts it to a model name"
+    is_url = False
+    try:
+        result = urlparse(name)
+        is_url = all([result.scheme, result.netloc])
+    except Exception:
+        is_url = False
+    # Pass through if not a URL
+    if not is_url:
+        return name
+    else:
+        path = result.path
+        return path[1:]
 
 
 def translate_llama2(text):
