@@ -65,8 +65,8 @@ with gr.Blocks() as demo:
         outputs=[out_text, out, post_to_hub],
     )
 
-    post_to_hub.click(report_results, inputs=[inp, library, access_token]).then(
-        lambda: gr.Button.update(visible=False), outputs=post_to_hub
+    post_to_hub.click(lambda: gr.Button.update(visible=False), outputs=post_to_hub).then(
+        report_results, inputs=[inp, library, access_token]
     )
 
 
