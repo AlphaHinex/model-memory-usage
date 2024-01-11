@@ -2,6 +2,7 @@ import gradio as gr
 import pandas as pd
 from hub_utils import check_for_discussion, report_results
 from model_utils import calculate_memory, get_model
+from huggingface_hub.utils import HfHubHTTPError
 
 
 # We need to store them as globals because gradio doesn't have a way for us to pass them in to the button
@@ -11,7 +12,10 @@ MODEL = None
 def get_results(model_name: str, library: str, options: list, access_token: str):
     global MODEL
     MODEL = get_model(model_name, library, access_token)
-    has_discussion = check_for_discussion(model_name)
+    try:
+        has_discussion = check_for_discussion(model_name)
+    except HfHubHTTPError:
+        has_discussion = True
     title = f"## Memory usage for '{model_name}'"
     data = calculate_memory(MODEL, options)
     return [title, gr.update(visible=True, value=pd.DataFrame(data)), gr.update(visible=not has_discussion)]
