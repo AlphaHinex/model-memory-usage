@@ -19,7 +19,17 @@ def get_results(model_name: str, library: str, options: list, access_token: str)
 with gr.Blocks() as demo:
     with gr.Column():
         gr.Markdown(
-            "..."
+            """<img src="https://huggingface.co/spaces/hf-accelerate/model-memory-usage/resolve/main/measure_model_size.png" style="float: left;" width="250" height="250"><h1>🤗 Model Memory Calculator</h1>
+    This tool will help you calculate how much vRAM is needed to train and perform big model inference
+    on a model hosted on the 🤗 Hugging Face Hub. The minimum recommended vRAM needed for a model
+    is denoted as the size of the "largest layer", and training of a model is roughly 4x its size (for Adam).
+    These calculations are accurate within a few percent at most, such as `bert-base-cased` being 413.68 MB and the calculator estimating 413.18 MB.
+    When performing inference, expect to add up to an additional 20% to this as found by [EleutherAI](https://blog.eleuther.ai/transformer-math/). 
+    More tests will be performed in the future to get a more accurate benchmark for each model.
+    Currently this tool supports all models hosted that use `transformers` and `timm`.
+    To use this tool pass in the URL or model name of the model you want to calculate the memory usage for,
+    select which framework it originates from ("auto" will try and detect it from the model metadata), and
+    what precisions you want to use."""
         )
         out_text = gr.Markdown()
         out = gr.DataFrame(
