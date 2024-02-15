@@ -1,6 +1,6 @@
 accelerate @ git+https://github.com/huggingface/accelerate
 transformers
 timm
-huggingface_hub
+huggingface_hub==0.19.4
 tabulate
 einops
