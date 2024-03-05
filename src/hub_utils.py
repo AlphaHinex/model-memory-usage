@@ -28,7 +28,7 @@ def report_results(model_name, library, access_token):
 
 You will need about {data[1]} VRAM to load this model for inference, and {data[3]} VRAM to train it using Adam.
     
-These calculations were measured from the [Model Memory Utility Space](https://hf.co/spaces/hf-accelerate/model-memory-utility) on the Hub.
+These calculations were measured from the [Model Memory Utility Space](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) on the Hub.
     
 The minimum recommended vRAM needed for this model assumes using [Accelerate or `device_map="auto"`](https://huggingface.co/docs/accelerate/usage_guides/big_modeling) and is denoted by the size of the "largest layer". 
 When performing inference, expect to add up to an additional 20% to this, as found by [EleutherAI](https://blog.eleuther.ai/transformer-math/). More tests will be performed in the future to get a more accurate benchmark for each model.
