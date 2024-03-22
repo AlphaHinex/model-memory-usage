@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 import gradio as gr
 import torch
-from accelerate.commands.estimate import check_has_model, create_empty_model
+from accelerate.commands.estimate import check_has_model, create_empty_model, estimate_training_usage
 from accelerate.utils import calculate_maximum_sizes, convert_bytes
 from huggingface_hub.utils import GatedRepoError, RepositoryNotFoundError
 
@@ -84,10 +84,12 @@ def calculate_memory(model: torch.nn.Module, options: list):
         dtype_largest_layer = largest_layer[0]
 
         modifier = DTYPE_MODIFIER[dtype]
+        dtype_training_size = estimate_training_usage(
+            dtype_total_size, dtype if dtype != "float16/bfloat16" else "float16"
+        )
         dtype_total_size /= modifier
         dtype_largest_layer /= modifier
 
-        dtype_training_size = convert_bytes(dtype_total_size * 4)
         dtype_total_size = convert_bytes(dtype_total_size)
         dtype_largest_layer = convert_bytes(dtype_largest_layer)
         data.append(

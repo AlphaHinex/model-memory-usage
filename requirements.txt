@@ -1,4 +1,4 @@
-accelerate @ git+https://github.com/huggingface/accelerate
+accelerate @ git+https://github.com/huggingface/accelerate@improve-model-estimator
 transformers
 timm
 huggingface_hub==0.19.4

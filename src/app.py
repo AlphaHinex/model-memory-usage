@@ -1,8 +1,9 @@
 import gradio as gr
 import pandas as pd
+from accelerate.utils import convert_bytes
 from hub_utils import check_for_discussion, report_results
-from model_utils import calculate_memory, get_model
 from huggingface_hub.utils import HfHubHTTPError
+from model_utils import calculate_memory, get_model
 
 
 def get_results(model_name: str, library: str, options: list, access_token: str):
@@ -13,7 +14,46 @@ def get_results(model_name: str, library: str, options: list, access_token: str)
         has_discussion = True
     title = f"## Memory usage for '{model_name}'"
     data = calculate_memory(model, options)
-    return [title, gr.update(visible=True, value=pd.DataFrame(data)), gr.update(visible=not has_discussion)]
+    stages = {"model": [], "gradients": [], "optimizer": [], "step": []}
+    for i, option in enumerate(data):
+        for stage in stages:
+            stages[stage].append(option["Training using Adam"][stage])
+        value = max(data[i]["Training using Adam"].values())
+        if value == -1:
+            value = "N/A"
+        else:
+            value = convert_bytes(value)
+        data[i]["Training using Adam"] = value
+
+    if any(value != -1 for value in stages["model"]):
+        out_explain = "## Training using Adam explained:\n"
+        out_explain += "When training on a batch size of 1, each stage of the training process is expected to have near the following memory results for each precision you selected:\n"
+        memory_values = pd.DataFrame(
+            columns=["dtype", "Model", "Gradient calculation", "Backward pass", "Optimizer step"]
+        )
+        for i, dtype in enumerate(options):
+            if stages["model"][i] != -1:
+                memory_values.loc[len(memory_values)] = [
+                    dtype,
+                    convert_bytes(stages["model"][i]),
+                    convert_bytes(stages["gradients"][i]),
+                    convert_bytes(stages["optimizer"][i]),
+                    convert_bytes(stages["step"][i]),
+                ]
+        return [
+            title,
+            gr.update(visible=True, value=pd.DataFrame(data)),
+            gr.update(visible=True, value=out_explain),
+            gr.update(visible=True, value=memory_values),
+            gr.update(visible=not has_discussion),
+        ]
+    return [
+        title,
+        gr.update(visible=True, value=pd.DataFrame(data)),
+        gr.update(visible=False, value=""),
+        gr.update(visible=False, value=pd.DataFrame()),
+        gr.update(visible=not has_discussion),
+    ]
 
 
 with gr.Blocks() as demo:
@@ -33,7 +73,13 @@ with gr.Blocks() as demo:
         )
         out_text = gr.Markdown()
         out = gr.DataFrame(
-            headers=["dtype", "Largest Layer", "Total Size", "Training using Adam"],
+            headers=["dtype", "Largest Layer", "Total Size", "Training using Adam (Peek vRAM)"],
+            interactive=False,
+            visible=False,
+        )
+        out_explain = gr.Markdown()
+        memory_values = gr.DataFrame(
+            headers=["dtype", "Model", "Gradient calculation", "Backward pass", "Optimizer step"],
             interactive=False,
             visible=False,
         )
@@ -56,7 +102,7 @@ with gr.Blocks() as demo:
     btn.click(
         get_results,
         inputs=[inp, library, options, access_token],
-        outputs=[out_text, out, post_to_hub],
+        outputs=[out_text, out, out_explain, memory_values, post_to_hub],
         api_name=False,
     )
 
