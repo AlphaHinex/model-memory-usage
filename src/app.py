@@ -17,13 +17,13 @@ def get_results(model_name: str, library: str, options: list, access_token: str)
     stages = {"model": [], "gradients": [], "optimizer": [], "step": []}
     for i, option in enumerate(data):
         for stage in stages:
-            stages[stage].append(option["Training using Adam (Peek vRAM)"][stage])
-        value = max(data[i]["Training using Adam (Peek vRAM)"].values())
+            stages[stage].append(option["Training using Adam (Peak vRAM)"][stage])
+        value = max(data[i]["Training using Adam (Peak vRAM)"].values())
         if value == -1:
             value = "N/A"
         else:
             value = convert_bytes(value)
-        data[i]["Training using Adam (Peek vRAM)"] = value
+        data[i]["Training using Adam (Peak vRAM)"] = value
 
     if any(value != -1 for value in stages["model"]):
         out_explain = "## Training using Adam explained:\n"
@@ -73,7 +73,7 @@ with gr.Blocks() as demo:
         )
         out_text = gr.Markdown()
         out = gr.DataFrame(
-            headers=["dtype", "Largest Layer", "Total Size", "Training using Adam (Peek vRAM)"],
+            headers=["dtype", "Largest Layer", "Total Size", "Training using Adam (Peak vRAM)"],
             interactive=False,
             visible=False,
         )
