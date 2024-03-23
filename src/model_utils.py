@@ -97,7 +97,7 @@ def calculate_memory(model: torch.nn.Module, options: list):
                 "dtype": dtype,
                 "Largest Layer or Residual Group": dtype_largest_layer,
                 "Total Size": dtype_total_size,
-                "Training using Adam (Peek vRAM)": dtype_training_size,
+                "Training using Adam (Peak vRAM)": dtype_training_size,
             }
         )
     return data
