@@ -33,7 +33,7 @@ def get_results(model_name: str, library: str, options: list, access_token: str)
         )
         for i, dtype in enumerate(options):
             if stages["model"][i] != -1:
-                memory_values.loc[len(memory_values)] = [
+                memory_values.loc[len(memory_values.index)] = [
                     dtype,
                     convert_bytes(stages["model"][i]),
                     convert_bytes(stages["gradients"][i]),
@@ -47,13 +47,14 @@ def get_results(model_name: str, library: str, options: list, access_token: str)
             gr.update(visible=True, value=memory_values),
             gr.update(visible=not has_discussion),
         ]
-    return [
-        title,
-        gr.update(visible=True, value=pd.DataFrame(data)),
-        gr.update(visible=False, value=""),
-        gr.update(visible=False, value=pd.DataFrame()),
-        gr.update(visible=not has_discussion),
-    ]
+    else:
+        return [
+            title,
+            gr.update(visible=True, value=pd.DataFrame(data)),
+            gr.update(visible=False, value=""),
+            gr.update(visible=False, value=pd.DataFrame()),
+            gr.update(visible=not has_discussion),
+        ]
 
 
 with gr.Blocks() as demo:
