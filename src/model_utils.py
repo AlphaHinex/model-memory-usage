@@ -23,8 +23,8 @@ def extract_from_url(name: str):
     if not is_url:
         return name
     else:
-        path = result.path
-        return path[1:]
+        path = result.path.split('/')
+        return '/'.join(path[1:3])
 
 
 def translate_llama2(text):
