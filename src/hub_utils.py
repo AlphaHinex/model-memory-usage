@@ -13,7 +13,7 @@ def check_for_discussion(model_name: str):
     model_name = extract_from_url(model_name)
     discussions = list(api.get_repo_discussions(model_name))
     return any(
-        discussion.title == "[AUTOMATED] Model Memory Requirements" and discussion.author == "model-sizer-bot"
+        discussion.author == "model-sizer-bot"
         for discussion in discussions
     )
 

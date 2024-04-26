@@ -107,7 +107,7 @@ with gr.Blocks() as demo:
         api_name=False,
     )
 
-    post_to_hub.click(lambda: gr.Button.update(visible=False), outputs=post_to_hub, api_name=False).then(
+    post_to_hub.click(lambda: gr.Button(visible=False), outputs=post_to_hub, api_name=False).then(
         report_results, inputs=[inp, library, access_token]
     )
 
