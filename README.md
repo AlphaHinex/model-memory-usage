@@ -4,7 +4,7 @@ emoji: 🚀
 colorFrom: pink
 colorTo: blue
 sdk: gradio
-sdk_version: 4.18.0
+sdk_version: 4.36.0
 app_file: src/app.py
 pinned: false
 license: apache-2.0
