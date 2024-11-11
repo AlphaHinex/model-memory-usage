@@ -27,8 +27,8 @@ def extract_from_url(name: str):
         return path[1:]
 
 
-def translate_llama2(text):
-    "Translates llama-2 to its hf counterpart"
+def translate_llama(text):
+    "Translates Llama-2 and CodeLlama to its hf counterpart"
     if not text.endswith("-hf"):
         return text + "-hf"
     return text
@@ -36,8 +36,8 @@ def translate_llama2(text):
 
 def get_model(model_name: str, library: str, access_token: str):
     "Finds and grabs model from the Hub, and initializes on `meta`"
-    if "meta-llama" in model_name:
-        model_name = translate_llama2(model_name)
+    if "meta-llama/Llama-2-" in model_name or "meta-llama/CodeLlama-" in model_name:
+        model_name = translate_llama(model_name)
     if library == "auto":
         library = None
     model_name = extract_from_url(model_name)
