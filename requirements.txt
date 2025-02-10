@@ -4,3 +4,4 @@ timm
 huggingface_hub==0.19.4
 tabulate
 einops
+gradio==4.43.0

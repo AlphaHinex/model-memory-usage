@@ -7,6 +7,8 @@ from model_utils import calculate_memory, get_model
 
 
 def get_results(model_name: str, library: str, options: list, access_token: str):
+    if access_token == "":
+        access_token = None
     model = get_model(model_name, library, access_token)
     # try:
     #     has_discussion = check_for_discussion(model_name)
