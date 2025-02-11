@@ -54,3 +54,5 @@ How to run locally
 1. Use python 3.8 version
 2. `pip install -r requirements.txt`
 3. `python src/app.py`
+
+![](./run-in-local.png)
