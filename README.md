@@ -48,6 +48,7 @@ index 7a5e23e..500023a 100644
      #     has_discussion = check_for_discussion(model_name)
 ```
 
+
 How to run locally
 ------------------
 
@@ -56,3 +57,9 @@ How to run locally
 3. `python src/app.py` or `HF_ENDPOINT=https://hf-mirror.com python src/app.py`
 
 ![](./run-in-local.png)
+
+
+Online version
+--------------
+
+https://modelscope.cn/studios/AlphaHinex/model-memory-usage
